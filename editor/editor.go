@@ -8,7 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func Edit(text, fileType string) (result string, err error) {
+func Edit(content []byte, fileType string) (result []byte, err error) {
 	var colorscheme femto.Colorscheme
 
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
@@ -20,7 +20,7 @@ func Edit(text, fileType string) (result string, err error) {
 	}
 
 	app := tview.NewApplication()
-	buffer := makeBufferFromString(text, fileType)
+	buffer := makeBuffer(content, fileType)
 	root := femto.NewView(buffer)
 	root.SetRuntimeFiles(runtime.Files)
 	root.SetColorscheme(colorscheme)
@@ -29,7 +29,7 @@ func Edit(text, fileType string) (result string, err error) {
 	root.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlW:
-			result = buffer.String()
+			result = []byte(buffer.String())
 			app.Stop()
 			return nil
 		case tcell.KeyCtrlQ:
@@ -41,14 +41,14 @@ func Edit(text, fileType string) (result string, err error) {
 	app.SetRoot(root, true)
 
 	if err = app.Run(); err != nil {
-		return "", errors.Wrap(err, "run editor")
+		return nil, errors.Wrap(err, "run editor")
 	}
 
-	return result, nil
+	return []byte(result), nil
 }
 
-func makeBufferFromString(content, filetype string) *femto.Buffer {
-	buff := femto.NewBufferFromString(content, "")
+func makeBuffer(content []byte, filetype string) *femto.Buffer {
+	buff := femto.NewBufferFromString(string(content), "")
 	buff.Settings["filetype"] = filetype
 	buff.Settings["keepautoindent"] = true
 	buff.Settings["statusline"] = false
