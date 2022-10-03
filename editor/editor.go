@@ -1,12 +1,61 @@
 package editor
 
 import (
+	"bytes"
+	"encoding/json"
+
 	"git.corout.in/golibs/errors"
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
 	"github.com/rivo/tview"
+	"gopkg.in/yaml.v2"
 )
+
+const ErrUnsupportedObjectFormat = errors.Const("unsupported object format")
+
+func EditObject(obj any, fileType string) error {
+	buf := &bytes.Buffer{}
+
+	switch fileType {
+	case "yaml":
+		encoder := yaml.NewEncoder(buf)
+		if err := encoder.Encode(obj); err != nil {
+			return errors.Wrap(err, "encode data to yaml")
+		}
+	case "json":
+		encoder := json.NewEncoder(buf)
+		encoder.SetIndent("", "  ")
+
+		if err := encoder.Encode(&obj); err != nil {
+			return errors.Wrap(err, "encode data to json")
+		}
+	default:
+		return ErrUnsupportedObjectFormat
+	}
+
+	data, err := Edit(buf.Bytes(), fileType)
+	if err != nil {
+		return errors.Wrap(err, "edit object data")
+	}
+
+	buf = bytes.NewBuffer(data)
+
+	switch fileType {
+	case "yaml":
+		decoder := yaml.NewDecoder(buf)
+		if err = decoder.Decode(obj); err != nil {
+			return errors.Wrapf(err, "unmarshal yaml")
+		}
+	case "json":
+		decoder := json.NewDecoder(buf)
+		if err = decoder.Decode(&obj); err != nil {
+			return errors.Wrapf(err, "unmarshal json")
+		}
+	}
+
+	return nil
+}
 
 func Edit(content []byte, fileType string) (result []byte, err error) {
 	var colorscheme femto.Colorscheme
@@ -33,6 +82,7 @@ func Edit(content []byte, fileType string) (result []byte, err error) {
 			app.Stop()
 			return nil
 		case tcell.KeyCtrlQ:
+			result = content
 			app.Stop()
 			return nil
 		}
@@ -44,7 +94,7 @@ func Edit(content []byte, fileType string) (result []byte, err error) {
 		return nil, errors.Wrap(err, "run editor")
 	}
 
-	return []byte(result), nil
+	return result, nil
 }
 
 func makeBuffer(content []byte, filetype string) *femto.Buffer {
