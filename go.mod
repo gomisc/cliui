@@ -1,15 +1,15 @@
-module git.corout.in/golibs/cliui
+module git.eth4.dev/golibs/cliui
 
 go 1.19
 
 require (
-	git.corout.in/golibs/errors v1.1.19
+	git.eth4.dev/golibs/errors v1.1.19
 	github.com/pgavlin/femto v0.0.0-20201224065653-0c9d20f9cac4
 	github.com/rivo/tview v0.0.0-20220916081518-2e69b7385a37
 )
 
 require (
-	git.corout.in/golibs/fields v1.0.6 // indirect
+	git.eth4.dev/golibs/fields v1.0.6 // indirect
 	github.com/atotto/clipboard v0.1.2 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.4.1-0.20210905002822-f057f0a857a1 // indirect

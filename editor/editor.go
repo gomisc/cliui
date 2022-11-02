@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"git.corout.in/golibs/errors"
+	"git.eth4.dev/golibs/errors"
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
