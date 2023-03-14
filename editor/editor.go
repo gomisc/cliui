@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"git.eth4.dev/golibs/errors"
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
 	"github.com/rivo/tview"
+	"gopkg.in/gomisc/errors.v1"
 	"gopkg.in/yaml.v2"
 )
 
